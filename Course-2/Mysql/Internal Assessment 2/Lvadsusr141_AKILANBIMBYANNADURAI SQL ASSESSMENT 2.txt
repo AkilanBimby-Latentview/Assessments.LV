@@ -1,0 +1,74 @@
+SQL ASSESSMENT 2
+
+
+1.select machine_id from l1_maintenance_records
+where month(maintenance_date)=3 and year(maintenance_date)=2024 and 
+cost>
+(select avg(cost) 
+from l1_maintenance_records
+where month(maintenance_date)=3 and year(maintenance_date)=2024 );
+
+2.select maintenance_type from l1_maintenance_records l1
+
+3.
+
+4.select product_id,
+max((select avg(incident_count_pre_update) from L2_updates a
+group by product_id where a.productid=L2_updates.product_id) -
+(select avg(incident_count_post_update) from L2_updates b
+group by product_id where b.productid=L2_updates.product_id))
+from L2_updates;
+
+
+
+5.select product_id,round(avg(user_feedback_score),2) as avg_feedbackscore
+from L2_updates
+group by product_id
+order by 2 desc
+limit 1 ;
+
+6.select product_id ,min(incident_count_post_update) as least_improvement
+from L2_updates
+group by product_id
+order by 2
+limit 1;
+
+7.select p.patient_name ,f.facility_name ,v.reason_for_visit ,t.outcome
+from l3_visits v
+join l3_patients p using(patient_id)
+join l3_facilities f using(facility_id)
+join l3_treatments t using(visit_id)
+where month(visit_date)=3 and year(visit_date)=2024;
+
+8.select facility_name ,count(visit_id) as no_of_emergency_visit
+from l3_facilities f 
+join l3_visits v using(facility_id)
+where v.reason_for_visit="Emergency" and
+ month(visit_date)=3 and year(visit_date)=2024
+group by facility_name;
+
+9.select insurance_provider ,patient_id,patient_name
+from  l3_visits
+join l3_patients using(patient_id)
+join l3_treatments using(visit_id)
+where outcome="complicated" and visit_date < "2024-04-01"
+group by insurance_provider,patient_id,patient_name;
+
+10.select max(quantity) from l4_sales
+where month(sale_date)=3 and year(sale_date)=2024
+group by product_id
+
+11.create view sales_store as 
+select s.region,sum(quantity*price) as total_sales
+from l4_sales sa
+join l4_stores s using(store_id)
+join l4_products p using(product_id)
+where month(sale_date)=3 and year(sale_date)=2024
+group by s.region
+order by 2 desc
+limit 1;
+
+select * from sales_store;
+
+12.select * from l4_products
+full join l4_sales using(product_id);
